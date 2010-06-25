@@ -1,0 +1,67 @@
+ThinkingTank
+=============
+
+ActiveRecord extension that allows to define models that should be indexed 
+in an existing IndexTank index. It supports a very similar syntax to 
+ThinkingSphinx allowing to easily port an existing project.
+
+Every indexable model should include a define_index block in its class 
+definition, see the example for more details. This block supports the indexes
+ method and receives a field name.
+
+Model classes now have a search method that receives one or more string 
+arguments with query strings (according to the query specifications) and 
+supports the :conditions argument as a hash from field name to query string. 
+
+In order for this extension to work you need to define a config/indextank.yml
+in your application with the api_key and index_code (or index_name) settings 
+for each environment (similar to config/database.yml).
+
+Indexed fields in ActiveRecord are prepended an underscore when sent to 
+IndexTank so if you plan to write query strings that use your field names you 
+will have to prepend the underscore to the field names.
+
+In order for the ThinkingTank rake tasks to be available you need to add:
+
+    require 'thinkingtank/tasks'
+    
+to your Rakefile. You can use the following task to reindex your entire database:
+
+    rake indextank:reindex
+
+
+Example
+=======
+
+Sample config/indextank.yml file:
+
+        development:
+          api_key: '<YOUR API KEY>'
+          index_code: '<INDEX CODE>'
+          # instead of index_code you can also use an index_name
+        test:
+          api_key: '<YOUR API KEY>'
+          index_code: '<INDEX CODE>'
+          # instead of index_code you can also use an index_name
+        production:
+          api_key: '<YOUR API KEY>'
+          index_code: '<INDEX CODE>'
+          # instead of index_code you can also use an index_name
+
+Sample model:
+    class Person < ActiveRecord::Base
+        define_index do
+            indexes :name
+            indexes gender
+            indexes age
+        end
+    end
+
+Sample query code:
+    Person.search("john")
+    Person.search("john OR stacey")
+    Person.search("stacey", :conditions => { :age => 25 } )
+    Person.search("james", :conditions => { :age => 25 , :gender => "female" } )
+   
+
+Copyright(c) 2010 Flaptor Inc.
