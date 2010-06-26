@@ -74,7 +74,7 @@ class << ActiveRecord::Base
         end
         # TODO : add relevance functions
 
-        it = IndexTankPlugin::Configuration.instance.client
+        it = ThinkingTank::Configuration.instance.client
         models = []
         ok, res = it.search("#{query.to_s} type:#{self.name}")
         if ok
