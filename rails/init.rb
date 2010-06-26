@@ -1,4 +1,4 @@
 # Include hook code here
 require 'active_record'
-require 'thinkingtank'
+require File.dirname(__FILE__) + '/../lib/thinkingtank/init'
 
