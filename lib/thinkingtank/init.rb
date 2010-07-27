@@ -1,4 +1,4 @@
-require 'indextank'
+require 'indextank_client'
 
 module ThinkingTank
     class Builder
@@ -31,7 +31,7 @@ module ThinkingTank
             return unless File.exists?(path)
 
             conf = YAML::load(ERB.new(IO.read(path)).result)[environment]
-            self.client = IndexTank.new(conf['api_key'], :index_code => conf['index_code'], :index_name => conf['index_name'])
+            self.client = IndexTank::ApiClient.new(conf['api_url']).get_index(conf['index_name'])
         end
         def environment
             if defined?(Merb)
@@ -51,11 +51,11 @@ module ThinkingTank
             data = {}
             self.class.thinkingtank_builder.index_fields.each do |field|
                 val = self.instance_eval(field.to_s)
-                data["_" + field.to_s] = val.to_s unless val.nil?
+                data[field.to_s] = val.to_s unless val.nil?
             end
-            data[:text] = data.values.join " . "
-            data[:type] = self.class.name
-            it.add(docid, data)
+            data[:__any] = data.values.join " . "
+            data[:__type] = self.class.name
+            it.add_document(docid, data)
         end
     end
 
@@ -64,26 +64,10 @@ end
 class << ActiveRecord::Base
     @indexable = false
     def search(*args)
-        options = args.extract_options!
-        query = args.join(' ')
-        if options.has_key? :conditions
-            options[:conditions].each do |field,value|
-                field = "_#{field}" # underscore prepended to ActiveRecord fields
-                query += " #{field}:(#{value})"
-            end
-        end
-        # TODO : add relevance functions
-
-        it = ThinkingTank::Configuration.instance.client
-        models = []
-        ok, res = it.search("#{query.to_s} type:#{self.name}")
-        if ok
-            res['docs'].each do |doc|
-                type, docid = doc['docid'].split(" ", 2)
-                models << self.find(id=docid)
-            end
-        end
-        return models
+        return indextank_search(true, *args)
+    end
+    def search_raw(*args)
+        return indextank_search(false, *args)
     end
 
     def define_index(name = nil, &block)
@@ -100,6 +84,41 @@ class << ActiveRecord::Base
     def thinkingtank_builder
         return @thinkingtank_builder
     end
+    
+    private
+    
+    def indextank_search(models, *args)
+        options = args.extract_options!
+        query = args.join(' ')
+        
+        # transform fields in query
+        
+        if options.has_key? :conditions
+            options[:conditions].each do |field,value|
+                query += " #{field}:(#{value})"
+            end
+        end
+        
+        # TODO : handle snippet, fetch and function
+
+        it = ThinkingTank::Configuration.instance.client
+        models = []
+        res = it.search("__any:(#{query.to_s}) __type:#{self.name}")
+        if models
+            res['results'].each do |doc|
+                type, docid = doc['docid'].split(" ", 2)
+                models << self.find(id=docid)
+            end
+            return models
+        else
+            res['results'].each do |doc|
+                type, docid = doc['docid'].split(" ", 2)
+                doc['model'] = self.find(id=docid)
+            end
+            return res
+        end
+    end
+
 end
 
 

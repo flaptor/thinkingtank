@@ -1,5 +1,6 @@
 require 'erb'
 require 'active_record'
+require 'indextank_client'
 
 def load_models
     app_root = ThinkingTank::Configuration.instance.app_root
@@ -28,6 +29,18 @@ def load_models
 end
 
 def reindex_models
+    it = ThinkingTank::Configuration.instance.client
+    if it.exists?
+        puts "Deleting existing index"
+        it.delete_index()
+    end
+    puts "Creating a new empty index"
+    it.create_index()
+    puts "Waiting for the index to be ready"
+    while not it.running?
+        sleep 0.5
+    end
+
     Object.subclasses_of(ActiveRecord::Base).each do |klass|
         reindex klass if klass.is_indexable?
     end
