@@ -31,7 +31,8 @@ module ThinkingTank
             return unless File.exists?(path)
 
             conf = YAML::load(ERB.new(IO.read(path)).result)[environment]
-            self.client = IndexTank::ApiClient.new(conf['api_url']).get_index(conf['index_name'])
+            api_url = ENV['HEROKUTANK_API_URL'] || conf['api_url']
+            self.client = IndexTank::ApiClient.new(api_url).get_index(conf['index_name'])
         end
         def environment
             if defined?(Merb)
