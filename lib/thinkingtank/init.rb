@@ -100,11 +100,11 @@ class << ActiveRecord::Base
             end
         end
         
-        # TODO : handle snippet, fetch and function
+        options.slice!(:snippet, :fetch, :function)
 
         it = ThinkingTank::Configuration.instance.client
         models = []
-        res = it.search("__any:(#{query.to_s}) __type:#{self.name}")
+        res = it.search("__any:(#{query.to_s}) __type:#{self.name}", options)
         if models
             res['results'].each do |doc|
                 type, docid = doc['docid'].split(" ", 2)
