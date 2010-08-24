@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name = %q{thinkingtank}
-  s.version = "0.0.3"
-  s.date = %q{2010-07-26}
+  s.version = "0.0.4"
+  s.date = %q{2010-07-27}
   s.authors = ["Flaptor"]
   s.email = %q{indextank@flaptor.com}
   s.summary = %q{Thinking-Sphinx-like Indextank plugin.}
