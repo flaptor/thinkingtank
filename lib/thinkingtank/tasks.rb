@@ -36,10 +36,15 @@ def reindex_models
     end
     puts "Creating a new empty index"
     it.create_index()
-    puts "Waiting for the index to be ready"
+    puts "Waiting for the index to be ready (this might take a while)"
     while not it.running?
+        print "."
+        STDOUT.flush
         sleep 0.5
     end
+    print "\n"
+    STDOUT.flush
+
 
     Object.subclasses_of(ActiveRecord::Base).each do |klass|
         reindex klass if klass.is_indexable?
