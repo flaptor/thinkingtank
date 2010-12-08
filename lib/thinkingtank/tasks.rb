@@ -54,6 +54,8 @@ def reindex(klass)
 end
 
 namespace :indextank do
+  # MUST have a description for it to show up in rake -T!
+    desc "Reindex all models. This deletes and recreates the index."
     task :reindex => :environment do
         load_models
         reindex_models
@@ -61,5 +63,6 @@ namespace :indextank do
 end
 
 namespace :it do
+    desc "An alias for indextank:reindex"
     task :reindex => "indextank:reindex"
 end
