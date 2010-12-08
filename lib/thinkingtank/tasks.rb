@@ -1,6 +1,6 @@
 require 'erb'
 require 'active_record'
-require 'indextank_client'
+require 'thinkingtank/indextank_client'
 
 def load_models
     app_root = ThinkingTank::Configuration.instance.app_root

@@ -1,4 +1,4 @@
-require 'indextank_client'
+require 'thinkingtank/indextank_client'
 
 module ThinkingTank
     class Builder
