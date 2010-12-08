@@ -1,4 +1,5 @@
-require 'thinkingtank/indextank_client'
+# Load init for Rails 2, since it directly loads this file
+require 'thinkingtank/init'
 
 def load_models
     app_root = ThinkingTank::Configuration.instance.app_root

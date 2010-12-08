@@ -30,6 +30,7 @@ module ThinkingTank
         attr_accessor :app_root, :client
         def initialize
             self.app_root = Rails.root if defined?(Rails.root)
+            self.app_root = RAILS_ROOT if defined?(RAILS_ROOT)
             self.app_root = Merb.root  if defined?(Merb)
             self.app_root ||= Dir.pwd
 
@@ -46,6 +47,8 @@ module ThinkingTank
                 Merb.environment
             elsif defined?(Rails.env)
                 Rails.env
+            elsif defined?(RAILS_ENV)
+                RAILS_ENV
             else
                 ENV['RAILS_ENV'] || 'development'
             end
