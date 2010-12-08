@@ -1,5 +1,3 @@
-require 'erb'
-require 'active_record'
 require 'thinkingtank/indextank_client'
 
 def load_models

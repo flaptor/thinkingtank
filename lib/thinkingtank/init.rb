@@ -1,3 +1,9 @@
+# Require these to allow requiring thinkingtank outside a Rails app, e.g.
+# for testing.
+require 'erb'
+require 'yaml'
+require 'singleton'
+
 require 'thinkingtank/indextank_client'
 
 module ThinkingTank
