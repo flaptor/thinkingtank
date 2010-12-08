@@ -38,7 +38,8 @@ module ThinkingTank
 
             conf = YAML::load(ERB.new(IO.read(path)).result)[environment]
             api_url = ENV['HEROKUTANK_API_URL'] || conf['api_url']
-            self.client = IndexTank::ApiClient.new(api_url).get_index(conf['index_name'])
+            index_name = conf['index_name'] || 'default_index'
+            self.client = IndexTank::ApiClient.new(api_url).get_index(index_name)
         end
         def environment
             if defined?(Merb)
