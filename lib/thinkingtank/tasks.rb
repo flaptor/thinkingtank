@@ -28,7 +28,9 @@ end
 
 def reindex_models
     it = ThinkingTank::Configuration.instance.client
-    if it.exists?
+    if it.exists? and it.code
+        # Check for code because it.exists? may return true for a
+        # nonexistent index
         puts "Deleting existing index"
         it.delete_index()
     end
