@@ -28,6 +28,11 @@ end
 
 def reindex_models
     it = ThinkingTank::Configuration.instance.client
+    if it.nil?
+        puts "!!! Couldn't create a client. Does config/indextank.yml have the correct info?"
+        return false
+    end
+
     if it.exists? and it.code
         # Check for code because it.exists? may return true for a
         # nonexistent index
