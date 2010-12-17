@@ -246,7 +246,7 @@ module IndexTank
     
     class HerokuClient < ApiClient
         def initialize()
-            super(ENV['HEROKUTANK_API_URL'])
+            super(ENV['INDEXTANK_API_URL'])
         end
     end
 
