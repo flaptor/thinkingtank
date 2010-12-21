@@ -56,7 +56,7 @@ def reindex_models
     if Object.respond_to?(:subclasses_of)
         subclasses = Object.subclasses_of(ActiveRecord::Base)
     elsif ActiveRecord::Base.respond_to?(:descendants)
-        subclasses =  ActiveRecord::Base.descendants
+        subclasses = ActiveRecord::Base.descendants
     else
         STDERR.puts "Couldn't detect models to index."
     end
