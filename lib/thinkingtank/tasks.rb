@@ -53,15 +53,17 @@ def reindex_models
 
 
     subclasses = nil
-    if Object.respond_to?(:subclasses_of)
-        subclasses = Object.subclasses_of(ActiveRecord::Base)
-    elsif ActiveRecord::Base.respond_to?(:descendants)
+    if ActiveRecord::Base.respond_to?(:descendants)
+        # Rails 3.0.0 and higher
         subclasses = ActiveRecord::Base.descendants
-    else
-        STDERR.puts "Couldn't detect models to index."
+    elsif Object.respond_to?(:subclasses_of)
+        subclasses = Object.subclasses_of(ActiveRecord::Base)
     end
 
-    unless subclasses.nil?
+    if subclasses.nil?
+        STDERR.puts "Couldn't detect models to index."
+        return false
+    else
         subclasses.each do |klass|
             reindex klass if klass.is_indexable?
         end
@@ -76,7 +78,7 @@ def reindex(klass)
 end
 
 namespace :indextank do
-  # MUST have a description for it to show up in rake -T!
+    # MUST have a description for it to show up in rake -T!
     desc "Reindex all models. This deletes and recreates the index."
     task :reindex => :environment do
         load_models
