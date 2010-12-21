@@ -52,8 +52,19 @@ def reindex_models
     STDOUT.flush
 
 
-    Object.subclasses_of(ActiveRecord::Base).each do |klass|
-        reindex klass if klass.is_indexable?
+    subclasses = nil
+    if Object.respond_to?(:subclasses_of)
+        subclasses = Object.subclasses_of(ActiveRecord::Base)
+    elsif ActiveRecord::Base.respond_to?(:descendants)
+        subclasses =  ActiveRecord::Base.descendants
+    else
+        STDERR.puts "Couldn't detect models to index."
+    end
+
+    unless subclasses.nil?
+        subclasses.each do |klass|
+            reindex klass if klass.is_indexable?
+        end
     end
 end
 
