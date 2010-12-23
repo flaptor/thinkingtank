@@ -1,4 +1,10 @@
-require 'indextank_client'
+# Require these to allow requiring thinkingtank outside a Rails app, e.g.
+# for testing.
+require 'erb'
+require 'yaml'
+require 'singleton'
+
+require 'thinkingtank/indextank_client'
 
 module ThinkingTank
     class Builder
@@ -23,6 +29,7 @@ module ThinkingTank
         include Singleton
         attr_accessor :app_root, :client
         def initialize
+            self.app_root = Rails.root if defined?(Rails.root)
             self.app_root = RAILS_ROOT if defined?(RAILS_ROOT)
             self.app_root = Merb.root  if defined?(Merb)
             self.app_root ||= Dir.pwd
@@ -32,11 +39,14 @@ module ThinkingTank
 
             conf = YAML::load(ERB.new(IO.read(path)).result)[environment]
             api_url = ENV['INDEXTANK_API_URL'] || conf['api_url']
-            self.client = IndexTank::ApiClient.new(api_url).get_index(conf['index_name'])
+            index_name = conf['index_name'] || 'default_index'
+            self.client = IndexTank::ApiClient.new(api_url).get_index(index_name)
         end
         def environment
             if defined?(Merb)
                 Merb.environment
+            elsif defined?(Rails.env)
+                Rails.env
             elsif defined?(RAILS_ENV)
                 RAILS_ENV
             else
@@ -61,65 +71,3 @@ module ThinkingTank
     end
 
 end
-
-class << ActiveRecord::Base
-    @indexable = false
-    def search(*args)
-        return indextank_search(true, *args)
-    end
-    def search_raw(*args)
-        return indextank_search(false, *args)
-    end
-
-    def define_index(name = nil, &block)
-        include ThinkingTank::IndexMethods
-        @thinkingtank_builder = ThinkingTank::Builder.new self, &block
-        @indexable = true
-        after_save :update_index
-    end
-
-    def is_indexable?
-        return @indexable
-    end
-
-    def thinkingtank_builder
-        return @thinkingtank_builder
-    end
-    
-    private
-    
-    def indextank_search(models, *args)
-        options = args.extract_options!
-        query = args.join(' ')
-        
-        # transform fields in query
-        
-        if options.has_key? :conditions
-            options[:conditions].each do |field,value|
-                query += " #{field}:(#{value})"
-            end
-        end
-        
-        options.slice!(:snippet, :fetch, :function)
-
-        it = ThinkingTank::Configuration.instance.client
-        models = []
-        res = it.search("__any:(#{query.to_s}) __type:#{self.name}", options)
-        if models
-            res['results'].each do |doc|
-                type, docid = doc['docid'].split(" ", 2)
-                models << self.find(id=docid)
-            end
-            return models
-        else
-            res['results'].each do |doc|
-                type, docid = doc['docid'].split(" ", 2)
-                doc['model'] = self.find(id=docid)
-            end
-            return res
-        end
-    end
-
-end
-
-

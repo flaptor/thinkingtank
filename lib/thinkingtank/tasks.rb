@@ -1,6 +1,5 @@
-require 'erb'
-require 'active_record'
-require 'indextank_client'
+# Load init for Rails 2, since it directly loads this file
+require 'thinkingtank/init'
 
 def load_models
     app_root = ThinkingTank::Configuration.instance.app_root
@@ -30,19 +29,44 @@ end
 
 def reindex_models
     it = ThinkingTank::Configuration.instance.client
-    if it.exists?
+    if it.nil?
+        puts "!!! Couldn't create a client. Does config/indextank.yml have the correct info?"
+        return false
+    end
+
+    if it.exists? and it.code
+        # Check for code because it.exists? may return true for a
+        # nonexistent index
         puts "Deleting existing index"
         it.delete_index()
     end
     puts "Creating a new empty index"
     it.create_index()
-    puts "Waiting for the index to be ready"
+    puts "Waiting for the index to be ready (this might take a while)"
     while not it.running?
+        print "."
+        STDOUT.flush
         sleep 0.5
     end
+    print "\n"
+    STDOUT.flush
 
-    Object.subclasses_of(ActiveRecord::Base).each do |klass|
-        reindex klass if klass.is_indexable?
+
+    subclasses = nil
+    if ActiveRecord::Base.respond_to?(:descendants)
+        # Rails 3.0.0 and higher
+        subclasses = ActiveRecord::Base.descendants
+    elsif Object.respond_to?(:subclasses_of)
+        subclasses = Object.subclasses_of(ActiveRecord::Base)
+    end
+
+    if subclasses.nil?
+        STDERR.puts "Couldn't detect models to index."
+        return false
+    else
+        subclasses.each do |klass|
+            reindex klass if klass.is_indexable?
+        end
     end
 end
 
@@ -54,6 +78,8 @@ def reindex(klass)
 end
 
 namespace :indextank do
+    # MUST have a description for it to show up in rake -T!
+    desc "Reindex all models. This deletes and recreates the index."
     task :reindex => :environment do
         load_models
         reindex_models
@@ -61,5 +87,6 @@ namespace :indextank do
 end
 
 namespace :it do
+    desc "An alias for indextank:reindex"
     task :reindex => "indextank:reindex"
 end
