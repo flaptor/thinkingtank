@@ -40,7 +40,7 @@ module ThinkingTank
             conf = YAML::load(ERB.new(IO.read(path)).result)[environment]
             api_url = ENV['INDEXTANK_API_URL'] || conf['api_url']
             index_name = conf['index_name'] || 'default_index'
-            self.client = IndexTank::ApiClient.new(api_url).get_index(index_name)
+            self.client = IndexTank::Client.new(api_url).indexes(index_name)
         end
         def environment
             if defined?(Merb)
@@ -66,7 +66,7 @@ module ThinkingTank
             end
             data[:__any] = data.values.join " . "
             data[:__type] = self.class.name
-            it.add_document(docid, data)
+            it.document(docid).add(data)
         end
     end
 
