@@ -1,5 +1,8 @@
 # Require these to allow requiring thinkingtank outside a Rails app, e.g.
 # for testing.
+require 'rubygems'
+require 'indextank'
+
 require 'erb'
 require 'yaml'
 require 'singleton'
