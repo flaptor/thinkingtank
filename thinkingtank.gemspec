@@ -10,6 +10,6 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://indextank.com/}
   s.description = %q{ActiveRecord extension that allows to define models that should be indexed in an existing IndexTank index.
     It supports a very similar syntax to ThinkingSphinx allowing to easily port an existing project.}
-  s.files = Dir.glob("lib/**/*.rb")
+  s.files = Dir.glob("lib/**/*.rb") << 'README.rdoc'
   s.add_dependency "indextank", ">= 0.0.5"
 end

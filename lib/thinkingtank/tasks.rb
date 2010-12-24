@@ -55,6 +55,7 @@ def reindex_models
         # Rails 3.0.0 and higher
         subclasses = ActiveRecord::Base.descendants
     elsif Object.respond_to?(:subclasses_of)
+        # Rails 2
         subclasses = Object.subclasses_of(ActiveRecord::Base)
     end
 
