@@ -4,8 +4,6 @@ require 'erb'
 require 'yaml'
 require 'singleton'
 
-require 'thinkingtank/indextank_client'
-
 module ThinkingTank
     class Builder
         def initialize(model, &block)
