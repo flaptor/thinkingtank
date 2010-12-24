@@ -34,14 +34,12 @@ def reindex_models
         return false
     end
 
-    if it.exists? and it.code
-        # Check for code because it.exists? may return true for a
-        # nonexistent index
+    if it.exists?
         puts "Deleting existing index"
-        it.delete_index()
+        it.delete
     end
     puts "Creating a new empty index"
-    it.create_index()
+    it.add
     puts "Waiting for the index to be ready (this might take a while)"
     while not it.running?
         print "."
