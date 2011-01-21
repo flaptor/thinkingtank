@@ -1,4 +1,3 @@
-require 'rails'
 require 'thinkingtank/init'
 
 if defined?(Rails::Railtie)

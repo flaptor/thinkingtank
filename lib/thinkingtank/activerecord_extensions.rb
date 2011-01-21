@@ -1,4 +1,5 @@
 require 'thinkingtank/init'
+require 'active_record'
 
 class << ActiveRecord::Base
     @indexable = false

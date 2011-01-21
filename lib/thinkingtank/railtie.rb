@@ -1,3 +1,5 @@
+require 'railties'
+
 class ThinkingTankRailtie < ::Rails::Railtie
     rake_tasks do
         require 'thinkingtank/tasks'
