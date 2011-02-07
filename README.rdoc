@@ -1,6 +1,6 @@
 = ThinkingTank
 
-See documentation: http://indextank.com/documentation/ruby-client
+See documentation in: http://indextank.com/documentation/ruby-client
 
 
 ActiveRecord extension that allows to define models that should be indexed 
@@ -16,7 +16,7 @@ arguments with query strings (according to the query specifications) and
 supports the :conditions argument as a hash from field name to query string. 
 
 In order for this extension to work you need to define a config/indextank.yml
-in your application with the api_key and index_code (or index_name) settings 
+in your application with the api_key and index_name settings 
 for each environment (similar to config/database.yml).
 
 Indexed fields in ActiveRecord are prepended an underscore when sent to 
@@ -24,8 +24,9 @@ IndexTank so if you plan to write query strings that use your field names you
 will have to prepend the underscore to the field names.
 
 == Rails 2
-In order for the ThinkingTank rake tasks to be available you need to add:
+In order for the ThinkingTank to be available you need to add:
 
+    require 'thinkingtank'
     require 'thinkingtank/tasks'
 
 to your Rakefile.
@@ -33,9 +34,9 @@ to your Rakefile.
 == Rails 3
 Just add
 
-    gem 'thinkingtank', '>=0.0.5'
+    gem 'thinkingtank'
 
-to your Gemfile, and you're done!
+to your Gemfile. 
 
 
 == Rails 2 and 3
@@ -45,36 +46,4 @@ entire database:
     rake indextank:reindex
 
 
-== Example
-Sample config/indextank.yml file:
-
-        development:
-          api_key: '<YOUR API KEY>'
-          index_code: '<INDEX CODE>'
-          # instead of index_code you can also use an index_name
-        test:
-          api_key: '<YOUR API KEY>'
-          index_code: '<INDEX CODE>'
-          # instead of index_code you can also use an index_name
-        production:
-          api_key: '<YOUR API KEY>'
-          index_code: '<INDEX CODE>'
-          # instead of index_code you can also use an index_name
-
-Sample model:
-    class Person < ActiveRecord::Base
-        define_index do
-            indexes :name
-            indexes gender
-            indexes age
-        end
-    end
-
-Sample query code:
-    Person.search("john")
-    Person.search("john OR stacey")
-    Person.search("stacey", :conditions => { :age => 25 } )
-    Person.search("james", :conditions => { :age => 25 , :gender => "female" } )
-
-
-Copyright (c) 2010 Flaptor Inc.
+Copyright (c) 2011 Flaptor Inc.
