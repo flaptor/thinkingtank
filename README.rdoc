@@ -1,5 +1,8 @@
 = ThinkingTank
 
+See documentation: http://indextank.com/documentation/ruby-client
+
+
 ActiveRecord extension that allows to define models that should be indexed 
 in an existing IndexTank index. It supports a very similar syntax to 
 ThinkingSphinx allowing to easily port an existing project.
