@@ -9,7 +9,7 @@ ThinkingSphinx allowing to easily port an existing project.
 
 Every indexable model should include a define_index block in its class 
 definition, see the example for more details. This block supports the indexes
- method and receives a field name.
+:method and receives a field name.
 
 Model classes now have a search method that receives one or more string 
 arguments with query strings (according to the query specifications) and 
