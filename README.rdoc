@@ -1,6 +1,6 @@
 = ThinkingTank
 
-See documentation in: http://indextank.com/documentation/ruby-client
+See documentation in: http://indextank.com/documentation/thinkingtank
 
 
 ActiveRecord extension that allows to define models that should be indexed 
