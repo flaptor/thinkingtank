@@ -2,7 +2,7 @@ require 'date'
 
 Gem::Specification.new do |s|
   s.name = %q{thinkingtank}
-  s.version = "0.0.7"
+  s.version = "0.0.8"
   s.date = Date.today.strftime("%Y-%m-%d")
   s.authors = ["Flaptor"]
   s.email = %q{indextank@flaptor.com}
