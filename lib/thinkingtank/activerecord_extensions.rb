@@ -15,6 +15,7 @@ class << ActiveRecord::Base
         @thinkingtank_builder = ThinkingTank::Builder.new self, &block
         @indexable = true
         after_save :update_index
+        before_destroy :delete_from_index
     end
 
     def is_indexable?

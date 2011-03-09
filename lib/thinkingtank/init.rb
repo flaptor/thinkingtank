@@ -69,6 +69,12 @@ module ThinkingTank
             data[:__type] = self.class.name
             it.document(docid).add(data)
         end
+
+        def delete_from_index
+            it = ThinkingTank::Configuration.instance.client
+            docid = self.class.name + ' ' + self.id.to_s
+            it.document(docid).delete()            
+        end
     end
 
 end
