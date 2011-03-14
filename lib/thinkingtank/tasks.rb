@@ -70,11 +70,20 @@ def reindex_models
     end
 end
 
-def reindex(klass)
+def reindex(klass, batch = false)
+    it = ThinkingTank::Configuration.instance.client
+    docs = []
+
     klass.find(:all).each do |obj|
         puts "re-indexing #{obj.class.name}:#{obj.id}"
-        obj.update_index
+        docs << obj.to_indexable_obj
+        
+        if docs.size >= 20
+            it.batch_insert docs
+            docs = []
+        end
     end
+    it.batch_insert docs
 end
 
 namespace :indextank do

@@ -57,17 +57,30 @@ module ThinkingTank
     end
     
     module IndexMethods
+
         def update_index
             it = ThinkingTank::Configuration.instance.client
-            docid = self.class.name + ' ' + self.id.to_s
-            data = {}
+            idx_obj = self.to_indexable_obj
+            
+            it.document(idx_obj[:docid]).add(idx_obj[:fields])
+        end
+
+        def to_indexable_obj
+            
+            idx_obj = {}
+            idx_obj[:docid] = self.class.name + ' ' + self.id.to_s
+            
+            fields = {}
             self.class.thinkingtank_builder.index_fields.each do |field|
                 val = self.instance_eval(field.to_s)
-                data[field.to_s] = val.to_s unless val.nil?
+                fields[field.to_s] = val.to_s unless val.nil?
             end
-            data[:__any] = data.values.join " . "
-            data[:__type] = self.class.name
-            it.document(docid).add(data)
+            fields[:__any] = fields.values.join " . "
+            fields[:__type] = self.class.name
+            
+            idx_obj[:fields] = fields
+
+            return idx_obj
         end
 
         def delete_from_index
