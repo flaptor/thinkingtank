@@ -2,7 +2,7 @@ require 'date'
 
 Gem::Specification.new do |s|
   s.name = %q{thinkingtank}
-  s.version = "0.0.9"
+  s.version = "0.0.10"
   s.date = Date.today.strftime("%Y-%m-%d")
   s.authors = ["Flaptor"]
   s.email = %q{indextank@flaptor.com}
@@ -11,5 +11,5 @@ Gem::Specification.new do |s|
   s.description = %q{ActiveRecord extension that allows to define models that should be indexed in an existing IndexTank index.
     It supports a very similar syntax to ThinkingSphinx allowing to easily port an existing project.}
   s.files = Dir.glob("lib/**/*.rb") << 'README.rdoc'
-  s.add_dependency "indextank", ">= 1.0.7"
+  s.add_dependency "indextank", ">= 1.0.8.1"
 end

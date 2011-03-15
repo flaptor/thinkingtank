@@ -62,13 +62,13 @@ module ThinkingTank
             it = ThinkingTank::Configuration.instance.client
             idx_obj = self.to_indexable_obj
             
-            it.document(idx_obj[:docid]).add(idx_obj[:fields])
+            it.document(idx_obj['docid']).add(idx_obj['fields'])
         end
 
         def to_indexable_obj
             
             idx_obj = {}
-            idx_obj[:docid] = self.class.name + ' ' + self.id.to_s
+            idx_obj['docid'] = self.class.name + ' ' + self.id.to_s
             
             fields = {}
             self.class.thinkingtank_builder.index_fields.each do |field|
@@ -78,7 +78,7 @@ module ThinkingTank
             fields[:__any] = fields.values.join " . "
             fields[:__type] = self.class.name
             
-            idx_obj[:fields] = fields
+            idx_obj['fields'] = fields
 
             return idx_obj
         end

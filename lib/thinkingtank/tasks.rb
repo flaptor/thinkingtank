@@ -73,17 +73,28 @@ end
 def reindex(klass, batch = false)
     it = ThinkingTank::Configuration.instance.client
     docs = []
+    count = 0
 
+    puts "Indexing #{klass.name}:"
     klass.find(:all).each do |obj|
-        puts "re-indexing #{obj.class.name}:#{obj.id}"
         docs << obj.to_indexable_obj
         
         if docs.size >= 20
+            doc_names = docs.map { |doc| doc['docid'] }
+            puts doc_names .join(',')
             it.batch_insert docs
+            count += docs.size
             docs = []
         end
     end
-    it.batch_insert docs
+    if docs.size > 0
+        doc_names = docs.map { |doc| doc['docid'] }
+        puts doc_names .join(',')
+        count += docs.size
+        it.batch_insert docs
+    end
+    
+    puts "#{klass.name}s indexed : #{count}"
 end
 
 namespace :indextank do
